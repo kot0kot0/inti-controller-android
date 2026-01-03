@@ -45,10 +45,20 @@ class IntiControlService : Service() {
             try {
                 while (isActive && System.currentTimeMillis() < endTime) {
                     Timber.d("Service: 定期送信を実行中 (残り: ${(endTime - System.currentTimeMillis())/1000}秒)")
-                    client.setWhiteBrightness(white)
-                    client.setWarmBrightness(warm)
-                    client.setWhiteLight(white > 0)
-                    client.setWarmLight(warm > 0)
+                    if (white == 0) {
+                        client.setWhiteLight(false)
+                    }
+                    else {
+                        client.setWhiteBrightness(white)
+                        client.setWhiteLight(true)
+                    }
+                    if (warm == 0) {
+                        client.setWarmLight(false)
+                    }
+                    else {
+                        client.setWarmBrightness(warm)
+                        client.setWarmLight(true)
+                    }
                     client.endControl()
                     client.apply()
 

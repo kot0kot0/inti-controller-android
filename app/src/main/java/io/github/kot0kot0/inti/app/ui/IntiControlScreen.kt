@@ -41,7 +41,8 @@ fun IntiControlScreen(viewModel: IntiViewModel, onConnectRequest: () -> Unit) {
             value = viewModel.whiteLevel,
             onValueChange = { viewModel.updateWhite(it) },
             onValueChangeFinished = { viewModel.sendCurrentLevels() },
-            valueRange = 0f..10f
+            valueRange = 0f..10f,
+            steps = 9
         )
 
         // --- 暖色レベル設定 ---
@@ -50,7 +51,8 @@ fun IntiControlScreen(viewModel: IntiViewModel, onConnectRequest: () -> Unit) {
             value = viewModel.warmLevel,
             onValueChange = { viewModel.updateWarm(it) },
             onValueChangeFinished = { viewModel.sendCurrentLevels() },
-            valueRange = 0f..10f
+            valueRange = 0f..10f,
+            steps = 9
         )
 
         Spacer(Modifier.height(16.dp))

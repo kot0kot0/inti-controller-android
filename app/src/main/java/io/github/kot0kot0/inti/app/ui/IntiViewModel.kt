@@ -50,10 +50,20 @@ class IntiViewModel(
                 val w = whiteLevel.toInt()
                 val r = warmLevel.toInt()
                 Timber.d("Bluetooth送信: W=$w, R=$r")
-                client.setWhiteLight(w > 0)
-                client.setWhiteBrightness(w)
-                client.setWarmLight(r > 0)
-                client.setWarmBrightness(r)
+                if (w == 0) {
+                    client.setWhiteLight(false)
+                }
+                else {
+                    client.setWhiteBrightness(w)
+                    client.setWhiteLight(true)
+                }
+                if (r == 0) {
+                    client.setWarmLight(false)
+                }
+                else {
+                    client.setWarmBrightness(r)
+                    client.setWarmLight(true)
+                }
                 client.endControl()
                 client.apply()
             } catch (e: Exception) {

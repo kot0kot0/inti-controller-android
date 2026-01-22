@@ -49,10 +49,14 @@ class IntiControlService : Service() {
 
         startForeground(1, notification)
 
-        controlJob?.cancel()
+        // 前ジョブのキャンセルで消灯コマンドが送信されてしまうため、再設定によるキャンセル(REPLACE)であることを一緒に伝える
+        controlJob?.cancel(CancellationException("REPLACE"))
         controlJob = serviceScope.launch {
             val endTime = System.currentTimeMillis() + (duration * 60 * 1000)
             val client = intiClient ?: return@launch
+
+            // 時間経過による終了か、再設定に伴う前ジョブのキャンセルによる終了かを判別する
+            var shouldTurnOff = true
 
             try {
                 while (isActive && System.currentTimeMillis() < endTime) {
@@ -77,13 +81,20 @@ class IntiControlService : Service() {
                     // 次の再送まで待機（25分または終了まで）
                     delay(minOf(endTime - System.currentTimeMillis(), 25 * 60 * 1000L))
                 }
+            } catch (e: CancellationException) {
+                if (e.message == "REPLACE") {
+                    shouldTurnOff = false
+                }
+                throw e
             } finally {
-                Timber.i("Service: 時間終了につき消灯")
-                client.setWhiteLight(false)
-                client.setWarmLight(false)
-                client.endControl()
-                client.apply()
-                stopSelf()
+                if (shouldTurnOff) {
+                    Timber.i("Service: 時間終了につき消灯")
+                    client.setWhiteLight(false)
+                    client.setWarmLight(false)
+                    client.endControl()
+                    client.apply()
+                    stopSelf()
+                }
             }
         }
 

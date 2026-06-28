@@ -27,6 +27,7 @@ import io.github.kot0kot0.inti.client.IntiClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -127,6 +128,8 @@ private fun performScanAndConnect(
                         // 接続を試みる
                         transport.connectToDevice(result.device)
                         viewModel.isConnected = true
+                        // 現在時刻でIntiの時刻をリセット
+                        viewModel.setTime(LocalDateTime.now())
                     } catch (e: Exception) {
                         viewModel.isConnected = false
                     } finally {

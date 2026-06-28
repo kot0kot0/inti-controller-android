@@ -43,6 +43,19 @@ class IntiViewModel(
         Timber.d("暖色レベル変更: ${value.toInt()}")
     }
 
+    fun setTime(time: java.time.LocalDateTime) {
+        if (!isConnected) return
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                client.setTime(time)
+                client.endControl()
+                client.apply()
+            } catch (e: Exception) {
+                Timber.e(e, "時刻設定失敗")
+            }
+        }
+    }
+
     fun sendCurrentLevels() {
         if (!isConnected) return
         viewModelScope.launch(Dispatchers.IO) {
